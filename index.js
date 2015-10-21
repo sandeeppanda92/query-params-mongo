@@ -27,7 +27,7 @@ var defaultAutoDetectTypes = [
 	{ valuePattern: /^[0-9]+$/, dataType: 'int' } ,
 	{ valuePattern: /^[0-9]*\.[0-9]+$/, dataType: 'float' } ,
 	{ valuePattern: /^true|false|yes|no$/i, dataType: 'bool' } ,
-	{ valuePattern: /^[0-9-: ]+$/, dataType: 'date' } ,
+	{ valuePattern: /^[0-9-: ]+$/, dataType: 'date' }
 ];
 
 var defaultDataTypeConverters = {
@@ -47,20 +47,21 @@ var defaultDataTypeConverters = {
  */
 module.exports = function qpm(opts) {
 
-	if (!opts)
-		opts = {};
+	opts = opts || {};
 
 	// user specified patterns take precedence, so add them before the default
-	var autoDetectTypes = opts.autoDetect ? opts.autoDetect : [];
+	var autoDetectTypes = opts.autoDetect ? opts.autoDetect : [];  // how about var autoDetectTypes = opts.autoDetect || [] ?
 	for (var i=0; i<defaultAutoDetectTypes.length; i++) {
 		autoDetectTypes.push(defaultAutoDetectTypes[i]);
-	};
+	}
 
 	var dataTypeConverters = defaultDataTypeConverters;
 	if (opts.converters) {
 		for (var type in opts.converters) {
 			// this will overwrite any default data-type specs.
-			dataTypeConverters[type] = opts.converters[type];
+			if(opts.converters.hasOwnProperty(type)) { //added a check so that we don't accidentally use any inherited properties
+				dataTypeConverters[type] = opts.converters[type];
+			}
 		}
 	}
 
@@ -261,4 +262,3 @@ module.exports = function qpm(opts) {
 	}
 
 }
-
